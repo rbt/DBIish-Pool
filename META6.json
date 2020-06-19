@@ -1,0 +1,33 @@
+{
+  "name": "DBIish::Pool",
+  "description": "Database connection pooling",
+  "version": "1.0.0",
+  "perl": "6.d",
+  "meta-version": "1",
+  "authors": [
+    "Rod Taylor <rbt@cpan.org>"
+  ],
+  "auth": "Rod Taylor <rbt@cpan.org>",
+  "depends": [
+    "DBIish<0.6.0+>"
+  ],
+  "build-depends": [],
+  "test-depends": [
+    "DBIish"
+  ],
+  "provides": {
+    "DBIish::Pool": "lib/DBIish/Pool.pm6"
+  },
+  "resources": [],
+  "support": {
+    "bugtracker": "https://github.com/rbt/DBIish-Pool/issues",
+    "email": "rbt@cpan.org",
+    "source": "https://github.com/rbt/DBIish-Pool.git"
+  },
+  "license": "CC0-1.0",
+  "tags": [
+    "database",
+    "postgres"
+  ],
+  "source-url": "https://github.com/rbt/DBIish-Pool.git"
+}
