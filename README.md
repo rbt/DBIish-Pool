@@ -3,8 +3,8 @@
 ## SYNOPSIS ##
 
     my %connection-parameters = database => 'foo', user => 'bar', password => secret();
-    my $pool = DBIish.new('Pg', $initial-size = 1, :$max-connections = 10, :$min-spare-connections = 1,
-                         :$max-idle-duration = Duration.new(60), Code :$!connection-scrub, |%connection-parameters);
+    my $pool = DBIish.new(driver => 'Pg', initial-size => 1, max-connections => 10, min-spare-connections => 1,
+                         max-idle-duration => Duration.new(60), |%connection-parameters);
 
     my $dbh = $pool.get-connection()
 
@@ -30,8 +30,8 @@ being unpredictable.
 See your database driver for a description of the connection parameters allowed. These are the same as the
 C<DBIish.connect> call.
 
-    my $pool = DBHish::Pool.new('Pg', :$max-connections = 10, :$max-idle-duration = Duration.new(60),
-        :$min-spare-connections = 1,  $initial-size = 1, |%connection-parameters);
+    my $pool = DBHish::Pool.new(driver => 'Pg', max-connections => 20, max-idle-duration => Duration.new(60),
+        min-spare-connections => 3,  initial-size => 5, |%dbiish-connection-parameters);
                        
     sub do-db-work() {
       my $dbh = $pool.get-connection();
@@ -68,11 +68,11 @@ C<DBIish.connect> call.
    Maximum number of database connections, including those currently being scrubbed of session state for reuse.
    Overall performance is often better if the database has a consistent load and spikes are smoothed out.
 
- - `|%connection-parameters` are whatever `DBIish` allows. For a pool for a PostgreSQL driver might be established
+ - `|%dbiish-connection-parameters` are whatever `DBIish` allows. For a pool for a PostgreSQL driver might be established
    like this:
  
    ```
-   my $pool = DBIish::Pool.new('Pg', dbname => 'dbtest', user => 'postgres', port => 5432, min-spare-connections => 1, max-connections => 20);
+   my $pool = DBIish::Pool.new(driver => 'Pg', dbname => 'dbtest', user => 'postgres', port => 5432, max-connections => 20);
    ```
 
 ### `get-connection` ###
