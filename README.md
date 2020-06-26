@@ -32,7 +32,7 @@ C<DBIish.connect> call.
 
     my $pool = DBHish::Pool.new(driver => 'Pg', max-connections => 20, max-idle-duration => Duration.new(60),
         min-spare-connections => 3,  initial-size => 5, |%dbiish-connection-parameters);
-                       
+
     sub do-db-work() {
       my $dbh = $pool.get-connection();
 
@@ -41,7 +41,7 @@ C<DBIish.connect> call.
       $sth.execute($session-id);
       my $ret = $sth.allrows();
       $dbh.dispose
-      
+
       return $ret;
     }
 
