@@ -38,6 +38,11 @@ has Channel $!connection-queue .= new;
 
 has Bool $!terminate-pool = False;
 
+# Trackers to warn about connection reuse possibilities that were missed.
+# Count of connections destroyed without dispose and a flag that it could have been used.
+has atomicint $!destroyed-connection = 0;
+has Bool $!wanted-connection-reuse = False;
+
 # Override the connection dispose function to enable connection reuse.
 role Pooled {
     has DBIish::Pool $.connection-pool is rw;
@@ -47,8 +52,6 @@ role Pooled {
         return $.connection-pool.reuse-connection(self);
     }
 
-    # Warn if the connection was DESTROYed prior to pool termination. This indicates that the connection
-    # went out of scope.
     submethod DESTROY() {
         $!connection-pool.dispose-connection();
     }
@@ -113,6 +116,10 @@ method !start-single-connection() {
 
     unless $connection.supports-connection-reuse {
         die 'Driver %s does not support connection reuse for pooling'.sprintf($!driver);
+    }
+
+    if $!destroyed-connection > 0 {
+        $!wanted-connection-reuse = True;
     }
 
     # Override the default connection dispose function.
@@ -210,12 +217,18 @@ method dispose() {
     }
 }
 
+method DESTROY {
+    if $!wanted-connection-reuse and $!destroyed-connection {
+        warn '%d connection(s) were DESTROYed. Calling $dbh.dispose() would have allowed reuse.'.sprintf($!destroyed-connection);
+    }
+}
+
 method dispose-connection {
     # If a connection was disposed of before pool termination then it should be removed from the inuse tracker and
     # the user notified that what they've done is inefficient
     unless $!terminate-pool {
         $!inuse-count ⚛-= 1;
-        warn 'Connection DESTROY without dispose() call. Connection cannot be reused in the pool';
+        $!destroyed-connection ⚛+= 1;
     }
 }
 
