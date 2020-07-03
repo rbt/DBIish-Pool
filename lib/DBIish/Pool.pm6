@@ -115,7 +115,8 @@ method !start-single-connection() {
         die 'Driver %s does not support connection reuse for pooling'.sprintf($!driver);
     }
 
-    $!connection-queue.send($connection);
+    # Override the default connection dispose function.
+    $!connection-queue.send($connection but Pooled);
 }
 
 method !get-one-connection() {
@@ -160,8 +161,6 @@ method !get-one-connection() {
 
     $!waiting-count ⚛-= 1;
 
-    # Override the default connection dispose function
-    $dbh = $dbh but Pooled;
     # Setup a reference to this pool. It's possible a user has multiple pools active.
     $dbh.connection-pool = self;
 
