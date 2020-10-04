@@ -6,7 +6,7 @@
   "build-depends": [
   ],
   "depends": [
-    "DBIish<0.6.0+>"
+    "DBIish:ver<0.6.0+>"
   ],
   "description": "Database connection pooling",
   "license": "CC0-1.0",
