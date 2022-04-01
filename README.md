@@ -30,7 +30,7 @@ being unpredictable.
 See your database driver for a description of the connection parameters allowed. These are the same as the
 C<DBIish.connect> call.
 
-    my $pool = DBHish::Pool.new(driver => 'Pg', max-connections => 20, max-idle-duration => Duration.new(60),
+    my $pool = DBIish::Pool.new(driver => 'Pg', max-connections => 20, max-idle-duration => Duration.new(60),
         min-spare-connections => 3,  initial-size => 5, |%dbiish-connection-parameters);
 
     sub do-db-work() {
