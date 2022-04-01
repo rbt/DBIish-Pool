@@ -1,0 +1,4 @@
+Revision history for DBIish-Pool
+
+{{$NEXT}}
+    - Support drivers missing connection reuse capability
