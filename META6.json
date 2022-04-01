@@ -14,7 +14,7 @@
   "name": "DBIish::Pool",
   "perl": "6.d",
   "provides": {
-    "DBIish::Pool": "lib/DBIish/Pool.pm6"
+    "DBIish::Pool": "lib/DBIish/Pool.rakumod"
   },
   "resources": [
   ],
