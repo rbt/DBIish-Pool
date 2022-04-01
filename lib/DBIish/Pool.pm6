@@ -48,8 +48,10 @@ role Pooled {
     has DBIish::Pool $.connection-pool is rw;
     has Bool $.pool-dispose is rw;
 
+    # Always attempt to reuse the connection. Let the reuse-connection determine whether it is possible
+    # or not.
     method dispose() {
-        return $.connection-pool.reuse-connection(self);
+        return $.connection-pool.reuse-connection(self, nextcallee);
     }
 
     submethod DESTROY() {
@@ -114,11 +116,8 @@ method !start-single-connection() {
     $!idle-count ⚛+= 1;
     $!starting-count ⚛-= 1;
 
-    unless $connection.supports-connection-reuse {
-        die 'Driver %s does not support connection reuse for pooling'.sprintf($!driver);
-    }
-
-    if $!destroyed-connection > 0 {
+    # Warn about destroying connections which might have been reused.
+    if $!destroyed-connection > 0 and $connection.supports-connection-reuse {
         $!wanted-connection-reuse = True;
     }
 
@@ -232,13 +231,25 @@ method dispose-connection {
     }
 }
 
-method reuse-connection($connection --> Bool) {
+method reuse-connection($connection, &original-dispose --> Bool) {
     $!scrub-count ⚛+= 1;
     $!inuse-count ⚛-= 1;
 
-    # Connection or pool is dead. Let be disconnected.
-    if (not $connection.ping or $!terminate-pool) {
+    # Let the connection be disconnected if connection reuse is not supported,
+    # the connection is dead, or the pool is being torn down.
+    if (not $connection.supports-connection-reuse or not $connection.ping or $!terminate-pool) {
         $!scrub-count ⚛-= 1;
+
+        # Call dispose method to ensure resources used by the connection gets cleaned up immediately.
+        original-dispose($connection);
+
+        # But, if the connection is dead it may still need to be replaced by a new connection.
+        # This applies for both non-reusable and network failed connections.
+        unless ($!terminate-pool) {
+            start {
+                self!inject-connections();
+            }
+        }
         return True;
     }
 
