@@ -1,4 +1,6 @@
 Revision history for DBIish-Pool
 
 {{$NEXT}}
+
+1.1.0  2022-04-01T11:35:34-04:00
     - Support drivers missing connection reuse capability
