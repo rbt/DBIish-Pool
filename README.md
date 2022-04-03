@@ -99,7 +99,7 @@ If preferred, you may obtain a connection asynchronously.
 
 A small Hash with pool connection statistics is available. This can be useful for automated monitoring purposes.
 
-   my %stats = $pool.stats();
+    my %stats = $pool.stats();
 
 Statistics fields include:
 
