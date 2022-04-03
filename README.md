@@ -28,7 +28,7 @@ dispose is called. Calling dispose is important as otherwise you may exhaust the
 being unpredictable.
 
 See your database driver for a description of the connection parameters allowed. These are the same as the
-C<DBIish.connect> call.
+`DBIish.connect` call.
 
     my $pool = DBIish::Pool.new(driver => 'Pg', max-connections => 20, max-idle-duration => Duration.new(60),
         min-spare-connections => 3,  initial-size => 5, |%dbiish-connection-parameters);
@@ -78,10 +78,13 @@ C<DBIish.connect> call.
 ### `get-connection` ###
 
 Returns a connection from the pool, establishing a new connection if necessary, when one becomes available. The
-connection is checked for connectivity prior to returning it to the client.
+connection is checked to confirm it is alive/active prior to giving it to the caller.
 
-Once `max-connections` is reached, this routine will not return a connection until one becomes available. Ensure you
-call `dispose` after finished using the connection to shorten this timeframe as garbage collection is not predictable.
+    my $dbh = $pool.get-connection();
+
+Once `max-connections` is reached, this routine will block until a connection becomes available. Ensure you
+call `dispose` after finished using the connection to shorten the idle timeframe as garbage collection is
+not immediate.
 
 If preferred, you may obtain a connection asynchronously.
 
