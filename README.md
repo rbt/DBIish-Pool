@@ -19,9 +19,14 @@ This module is useful for apps supporting multiple parallel users which arrive a
 web application. In addition to connection reuse it allow configuring  a maximum number of simultaneous connections to
 ensure the database does not go over capacity.
 
-Database connection reuse improves performance significantly for very simple transactions, or
-long distance networks using SSL encrypted connections. 300% has been seen within the same network
-for web requests, where each request was establishing a new connection.
+Some `DBIish` drivers, like `Pg`, allow database connection reuse. This improves performance significantly
+for very simple transactions, or long distance networks using SSL encrypted connections.
+300% has been seen within the same network for web requests, where each request was establishing
+a new connection.
+
+`DBIish` drivers which do not support connection reuse can still benefit from pooling as `DBIish::Pool` connects
+early to allow queries to be performed immediately, and enforces limits to help prevent Denial-Of-Service of the
+database. The statistics can also be useful for monitoring purposes.
 
 To use, create a pool, then take a connection from that pool. The connection is returned to the pool when
 dispose is called. Calling dispose is important as otherwise you may exhaust the pool due to garbage collection
