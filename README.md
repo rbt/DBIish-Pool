@@ -94,6 +94,7 @@ A small Hash with pool connection statistics is available. This can be useful fo
    my %stats = $pool.stats();
 
 Statistics fields include:
+
   * inuse ➡ Number of connections currently in use.
   * idle ➡ Number available for immediate use.
   * starting ➡ Number starting up.
